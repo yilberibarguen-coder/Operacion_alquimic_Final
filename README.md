@@ -105,19 +105,23 @@ La justificacion completa de las decisiones esta en [`docs/DISENO.md`](docs/DISE
 ## Pruebas
 `.\mvnw.cmd test` ejecuta pruebas unitarias del dominio, un test por cada requisito F1 a F6 (incluida la consistencia),
 pruebas del adaptador HTTP y una prueba de arranque del contexto de Spring.
+La suite contiene 80 casos. Incluye registros simultaneos, actualizaciones parciales concurrentes sin perdida de campos,
+eliminacion frente a actualizacion, entradas HTTP invalidas y conservacion de los datos cuando una modificacion es rechazada.
 
 ## Subirlo a GitHub
-1. Crea un repositorio **vacio** en https://github.com/new (sin README ni .gitignore) y copia su URL.
-2. En la carpeta del proyecto:
+Repositorio: https://github.com/yilberibarguen-coder/Operacion_alquimic_Final
+
+En VS Code abre la carpeta `Operacion_alquimic_Final` que contiene `pom.xml` y su propio directorio `.git`.
+Para publicar cambios desde el repositorio ya clonado y conectado a GitHub:
 ```bash
-git init
+git status
 git add .
-git commit -m "Operacion Alquimia - Protocolo Savitar"
-git branch -M main
-git remote add origin https://github.com/TU_USUARIO/TU_REPOSITORIO.git
-git push -u origin main
+git commit -m "Actualizar Operacion Alquimia"
+git push origin main
 ```
-3. Entrega el enlace del repositorio. Comprueba en GitHub que se ven `pom.xml`, `mvnw`, `mvnw.cmd`, la carpeta `.mvn` y `src`.
+Git debe tener configurados `user.name` y `user.email`, ademas de una cuenta autenticada con permiso de escritura.
+Comprueba en GitHub que se ven `pom.xml`, `mvnw`, `mvnw.cmd`, `.mvn`, `.github` y `src`.
+El workflow Compatibility verifica la version publicada; sus resultados estan en la pestana Actions.
 
 ## Problemas frecuentes
 | Sintoma | Solucion |

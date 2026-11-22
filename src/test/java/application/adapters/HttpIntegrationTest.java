@@ -66,6 +66,37 @@ class HttpIntegrationTest {
         assertTrue(repository.findAll().isEmpty());
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "{\"deviceId\":\"CCPD\",\"distance\":-1,\"message\":[\"hola\"]}",
+            "{\"deviceId\":\"CCPD\",\"distance\":\"invalid\",\"message\":[\"hola\"]}",
+            "{\"deviceId\":\"CCPD\",\"message\":[\"hola\"]}",
+            "{\"deviceId\":\"CCPD\",\"distance\":200,\"message\":null}",
+            "{\"deviceId\":\"CCPD\",\"distance\":200,\"message\":[null]}",
+            "{\"deviceId\":\"CCPD\",\"distance\":200,\"message\":[]}",
+            "{\"deviceId\":\"UNKNOWN\",\"distance\":200,\"message\":[\"hola\"]}"
+    })
+    void invalidRegistrationsReturn400WithoutStoringAnything(String body) throws Exception {
+        assertError(request("POST", "/devices", body), 400);
+        assertTrue(repository.findAll().isEmpty());
+    }
+
+    @Test void invalidPutAndPatchKeepThePreviousReading() throws Exception {
+        assertEquals(201, request("POST", "/devices", CCPD).statusCode());
+        var original = json(request("GET", "/devices/CCPD", null));
+        for (String method : new String[]{"PUT", "PATCH"}) {
+            for (String body : new String[]{"{}", "{\"distance\":300,\"message\":[null]}"}) {
+                assertError(request(method, "/devices/CCPD", body), 400);
+                assertEquals(original, json(request("GET", "/devices/CCPD", null)));
+            }
+        }
+    }
+
+    @Test void completeAnalysisRejectsRepeatedDevices() throws Exception {
+        assertError(request("POST", "/analysis", "{\"devices\":[" + CCPD + "," + CCPD + "," + CCPD + "]}"), 400);
+        assertTrue(repository.findAll().isEmpty());
+    }
+
     @Test void impossibleCompleteDistancesReturn422() throws Exception {
         String body = "{\"devices\":[" + LABS.replace("670.82", "1") + ","
                 + CCPD.replace("200", "1") + "," + SATELLITE.replace("400", "1") + "]}";

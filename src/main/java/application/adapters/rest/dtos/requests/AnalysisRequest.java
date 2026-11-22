@@ -8,5 +8,5 @@ import java.util.List;
 
 /** The complete information of the three devices received together. */
 public record AnalysisRequest(
-        @NotEmpty @Valid List<@NotNull RegisterReadingRequest> devices) {
+        @NotEmpty List<@NotNull @Valid RegisterReadingRequest> devices) {
 }
